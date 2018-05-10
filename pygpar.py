@@ -20,14 +20,32 @@ class PP(object):
 		self.filter_exists = filter_exists
 		self.n = 0
 
-	def queue(self, *args):
+	def _to_line(self, *args):
 		if self.filter_exists and os.path.exists(args[0]):
+			return ""
+		else:
+			return self.colsep.join(args)+'\n'
+
+	def queue(self, *args):
+		s = self._to_line(*args)
+		if not s:
 			return None
 
-		self.process.stdin.write(self.colsep.join(args)+'\n')
+		self.process.stdin.write(s)
 		self.process.stdin.flush()
 		self.n += 1
 		return self.n
+
+	def queue_list(self, lst):
+		s = ''.join(
+			(self._to_line(*j) if type(j) in (list, tuple) else self._to_line(j))
+			for j in lst
+		)
+		self.process.stdin.write(s)
+		self.process.stdin.flush()
+		old_n = self.n
+		self.n += len(lst)
+		return range(old_n+1, self.n+1)
 
 	def queue_iter(self, it):
 		return [ (self.queue(*j) if type(j) in (list, tuple) else self.queue(j)) for j in it ]
