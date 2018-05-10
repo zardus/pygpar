@@ -6,7 +6,7 @@ class PP(object):
 	The PP (Python Parallel) class wraps GNU parallel to execute commands.
 	"""
 
-	def __init__(self, cmd, eta=True, colsep='%COLSEP%', verbose=False, filter_exists=False, **kwargs):
+	def __init__(self, cmd, jobs=None, eta=True, colsep='%COLSEP%', verbose=False, filter_exists=False, **kwargs):
 		self.cmd = [ 'parallel' ]
 		if colsep:
 			self.cmd += [ '-C', colsep ]
@@ -14,6 +14,8 @@ class PP(object):
 			self.cmd += [ '--eta' ]
 		if verbose:
 			self.cmd += [ '-v' ]
+		if jobs is not None:
+			self.cmd += [ '-j', str(jobs) ]
 		self.cmd += [ cmd ]
 		self.colsep = colsep
 		self.process = subprocess.Popen(self.cmd, stdin=subprocess.PIPE, **kwargs)
