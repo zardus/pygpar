@@ -46,7 +46,7 @@ class PP(object):
 		self.process.stdin.write(s)
 		self.process.stdin.flush()
 		old_n = self.n
-		self.n += len(lst)
+		self.n += s.count('\n')
 		return range(old_n+1, self.n+1)
 
 	def queue_iter(self, it):
