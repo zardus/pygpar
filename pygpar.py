@@ -42,11 +42,11 @@ class PP(object):
 		s = ''.join(
 			(self._to_line(*j) if type(j) in (list, tuple) else self._to_line(j))
 			for j in lst
-		)
+		).encode('latin1')
 		self.process.stdin.write(s)
 		self.process.stdin.flush()
 		old_n = self.n
-		self.n += s.count('\n')
+		self.n += s.count(b'\n')
 		return range(old_n+1, self.n+1)
 
 	def queue_iter(self, it):
@@ -57,8 +57,8 @@ class PP(object):
 		self.process.wait()
 
 	def __enter__(self):
-		print "ENTERING:", self.cmd
+		print("ENTERING:", self.cmd)
 		return self
 	def __exit__(self, *args):
-		print "... EXITING"
+		print("... EXITING")
 		self.wait()
